@@ -154,7 +154,7 @@ class J_StringSelectByGender:
         if len(input_list) == 0:
             return (default,)
         
-        rx = re.compile(r"\b(man|woman|girl|boy)\b")
+        rx = re.compile(r"\b(man|wom(an)?|girl|boy)\b")
         for s in input_list:
             match = rx.search(s)
             if match:
