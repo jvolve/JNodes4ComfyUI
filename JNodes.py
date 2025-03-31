@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import re
 
@@ -187,7 +188,39 @@ class J_FilenameWithoutExtension:
         
         return (result,)
 
+class J_GetInputFileNamesWithoutOutputs:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {
+                "input_folder": ("STRING", { "forceInput": True }),
+                "output_folder": ("STRING", { "forceInput": True }),
+                "index": ("INT", {"default": 0, "min": 0, "max": 1000, "step": 1}),
+            },
+        }
 
+    RETURN_TYPES = ("STRING", "STRING", "STRING",)
+    RETURN_NAMES = ("input_full_path", "output_folder", "output_filename",)
+
+    FUNCTION = "doit"
+
+    OUTPUT_NODE = True
+
+    CATEGORY = "JNodes"
+
+    def doit(self, input_folder:str, output_folder:str, index:int):
+        input = Path(input_folder)
+        output = Path(output_folder)
+        required_extension = ".png"
+        results:list[str] = []
+        for file in os.listdir(input):
+            output_full_path = output.joinpath(file)
+            if file.endswith(required_extension) and not os.path.isfile(output_full_path):
+                results.append(file)
+        
+        input_full_path = input.joinpath(results[index]).absolute().as_posix()
+        output_filename = os.path.splitext(results[index])[0]
+        return (input_full_path, output.absolute().as_posix(), output_filename)
 
 NODE_CLASS_MAPPINGS = {
     "J Contains String": J_StringContains,
@@ -196,4 +229,5 @@ NODE_CLASS_MAPPINGS = {
     "J Select String": J_StringSelect,
     "J Select String By Gender": J_StringSelectByGender,
     "J Filename Without Extension": J_FilenameWithoutExtension,
+    "J Get Input File Names Without Outputs": J_GetInputFileNamesWithoutOutputs,
 }
