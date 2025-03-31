@@ -215,7 +215,7 @@ class J_GetInputFileNamesWithoutOutputs:
         results:list[str] = []
         for file in os.listdir(input):
             output_full_path = output.joinpath(file)
-            if file.endswith(required_extension) and not os.path.isfile(output_full_path):
+            if file.endswith(required_extension):
                 results.append(file)
         
         input_full_path = input.joinpath(results[index]).absolute().as_posix()
